@@ -104,6 +104,7 @@ def onQQMessage(bot, contact, member, content):
         if flag:
             bot.SendTo(contact, con)
             return
+        # shutdown
         if 'rm -rf /' == content or ':{:|:&};:' == content or '%0|%0' == content:
             bot.SendTo(contact, '再见，我要休息一会。')
             bot.Stop()
