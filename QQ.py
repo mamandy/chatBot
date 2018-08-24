@@ -6,6 +6,12 @@ import requests, re, random, json, pyperclip
 # numpy, matplotlib, pandas, tensorflow
 
 
+global Sol_bot, cyjlflag
+data = {"data/idiom_h":"data/idiom_t", \
+        "data/song_h": "data/song_t", \
+        "data/tang_h": "data/tang_t"}
+Sol_bot = solitaire(data=data)
+
 def shorten(url,idx=1):
     # 网址缩短
     if idx:
@@ -58,6 +64,30 @@ def extraFunction(contact,content):
     con  = ''
     if contact.name in ['胡扯吹水群','迷宫里的寻找者'] or \
             contact.name[0:7]=='Freedom':
+		if content == '接龙启动':
+            cyjlflag = True
+            return 1,Sol_bot.solo(options=[0,1,2])
+        elif content == '接龙退出':
+            cyjlflag = False
+        if cyjlflag:
+            if content[0] in [':','：']:
+                tmp = re.sub('[^一-龥a-zA-Z]','',content)
+                response = solitaire_plus(Sol_bot, tmp)
+                if Sol_bot._solitaire__last[0]==1:
+                    with open(file='song100',mode='r',encoding='utf-8') as f:
+                        content = f.read().strip().split('%')
+                        for poem in content:
+                            if Sol_bot._solitaire__last[1] in poem:
+                                response += '\n' + re.findall('《[\s\S]+?》',poem)[0]
+                                break
+                elif Sol_bot._solitaire__last[0]==2:
+                    with open(file='tang300',mode='r',encoding='utf-8') as f:
+                        content = f.read().strip().split('%')
+                        for poem in content:
+                            if Sol_bot._solitaire__last[1] in poem:
+                                response += '\n' + re.findall('《[\s\S]+?》',poem)[0]
+                                break
+                return 1,response
         if '搜歌' == content[0:2]:
             # 搜歌曲
             tmp = SingForMe(content[2:])
